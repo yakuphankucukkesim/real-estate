@@ -33,8 +33,8 @@ import React from "react";
 const PaymentMethod = () => {
   return (
     <div className="bg-white rounded-xl shadow-md overflow-hidden p-6 mt-10 md:mt-0 flex-1">
-      <h2 className="text-2xl font-bold mb-4">Payment method</h2>
-      <p className="mb-4">Change how you pay for your plan.</p>
+      <h2 className="text-2xl font-bold mb-4">Payment Method</h2>
+      <p className="mb-4">Change your payment method for your plan.</p>
       <div className="border rounded-lg p-6">
         <div>
           {/* Card Info */}
@@ -52,12 +52,12 @@ const PaymentMethod = () => {
                 </div>
                 <div className="text-sm text-gray-500 flex items-center">
                   <CreditCard className="w-4 h-4 mr-1" />
-                  <span>Expiry • 26/06/2024</span>
+                  <span>Expiry Date • 26/06/2024</span>
                 </div>
               </div>
               <div className="text-sm text-gray-500 flex items-center">
                 <Mail className="w-4 h-4 mr-1" />
-                <span>billing@baseclub.com</span>
+                <span>billings@baseclub.com</span>
               </div>
             </div>
           </div>

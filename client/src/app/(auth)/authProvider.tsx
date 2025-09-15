@@ -17,6 +17,15 @@ Amplify.configure({
       userPoolId: process.env.NEXT_PUBLIC_AWS_COGNITO_USER_POOL_ID!,
       userPoolClientId:
         process.env.NEXT_PUBLIC_AWS_COGNITO_USER_POOL_CLIENT_ID!,
+      loginWith: {
+        oauth: {
+          domain: process.env.NEXT_PUBLIC_AWS_COGNITO_DOMAIN!,
+          scopes: ["openid", "email", "profile"],
+          redirectSignIn: [process.env.NEXT_PUBLIC_APP_URL!],
+          redirectSignOut: [process.env.NEXT_PUBLIC_APP_URL!],
+          responseType: "code",
+        },
+      },
     },
   },
 });
@@ -26,14 +35,13 @@ const components = {
     return (
       <View className="mt-4 mb-7">
         <Heading level={3} className="!text-2xl !font-bold">
-          RENT
+          STAY
           <span className="text-secondary-500 font-light hover:!text-primary-300">
-            IFUL
+            IO
           </span>
         </Heading>
         <p className="text-muted-foreground mt-2">
-          <span className="font-bold">Hoşgeldiniz!</span> Devam etmek için giriş
-          yapın
+          <span className="font-bold">Welcome!</span> Log in to continue
         </p>
       </View>
     );
@@ -44,12 +52,12 @@ const components = {
       return (
         <View className="text-center mt-4">
           <p className="text-muted-foreground">
-            Hesabınız yok mu?{" "}
+            Don't have an account? {" "}
             <button
               onClick={toSignUp}
               className="text-primary hover:underline bg-transparent border-none p-0"
             >
-              Kaydolun
+              Sign Up
             </button>
           </p>
         </View>
@@ -70,8 +78,8 @@ const components = {
             hasError={!!validationErrors?.["custom:role"]}
             isRequired
           >
-            <Radio value="tenant">Kiracı</Radio>
-            <Radio value="manager">Yönetici</Radio>
+            <Radio value="tenant">Tenant</Radio>
+            <Radio value="manager">Manager</Radio>
           </RadioGroupField>
         </>
       );
@@ -82,12 +90,12 @@ const components = {
       return (
         <View className="text-center mt-4">
           <p className="text-muted-foreground">
-            Zaten hesabınız var mı?{" "}
+            Already have an account? {" "}
             <button
               onClick={toSignIn}
               className="text-primary hover:underline bg-transparent border-none p-0"
             >
-              Giriş yapın
+              Log in
             </button>
           </p>
         </View>
@@ -99,12 +107,12 @@ const components = {
 const formFields = {
   signIn: {
     username: {
-      placeholder: "E-posta adresinizi girin",
-      label: "E-posta",
+      placeholder: "Enter your e-mail address",
+      label: "Email",
       isRequired: true,
     },
     password: {
-      placeholder: "Şifrenizi girin",
+      placeholder: "Enter your password",
       label: "Password",
       isRequired: true,
     },
@@ -112,33 +120,36 @@ const formFields = {
   signUp: {
     username: {
       order: 1,
-      placeholder: "Kullanıcı adınızı girin",
-      label: "Kullanıcı Adı",
+      placeholder: "Enter your username",
+      label: "Username",
       isRequired: true,
     },
     email: {
       order: 2,
-      placeholder: "E-posta adresinizi girin",
-      label: "E-posta",
+      placeholder: "Enter your e-mail address",
+      label: "Email",
       isRequired: true,
     },
     password: {
       order: 3,
-      placeholder: "Şifrenizi girin",
-      label: "Şifre",
+      placeholder: "Enter your password",
+      label: "Password",
       isRequired: true,
     },
     confirm_password: {
       order: 4,
-      placeholder: "Şifrenizi tekrar girin",
-      label: "Şifrenizi onaylayın",
+      placeholder: "Re-enter your password",
+      label: "Confirm your password",
       isRequired: true,
     },
   },
 };
 
 const Auth = ({ children }: { children: React.ReactNode }) => {
-  const { user } = useAuthenticator((context) => [context.user]);
+  const { user, authStatus } = useAuthenticator((context) => [
+    context.user,
+    context.authStatus,
+  ]);
   const router = useRouter();
   const pathname = usePathname();
 
@@ -151,6 +162,15 @@ const Auth = ({ children }: { children: React.ReactNode }) => {
       router.push("/");
     }
   }, [user, isAuthPage, router]);
+
+  // Show loading state while auth is being determined
+  if (authStatus === "configuring") {
+    return (
+      <div className="h-full flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-700"></div>
+      </div>
+    );
+  }
 
   if (!isAuthPage && !isDashboardPage) {
     return <>{children}</>;

@@ -88,7 +88,7 @@ const Applications = () => {
                       <div className="flex flex-wrap items-center">
                         <File className="w-5 h-5 mr-2 flex-shrink-0" />
                         <span className="mr-2">
-                          Application submitted on{" "}
+                          Application date {" "}
                           {new Date(
                             application.applicationDate
                           ).toLocaleDateString()}
@@ -105,11 +105,11 @@ const Applications = () => {
                           }`}
                         >
                           {application.status === "Approved" &&
-                            "This application has been approved."}
+                            "Your application has been approved."}
                           {application.status === "Denied" &&
-                            "This application has been denied."}
+                            "Your application has been denied."}
                           {application.status === "Pending" &&
-                            "This application is pending review."}
+                            "Your application is pending."}
                         </span>
                       </div>
                     </div>

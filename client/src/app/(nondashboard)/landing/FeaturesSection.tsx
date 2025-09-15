@@ -21,6 +21,7 @@ const itemVariants = {
   hidden: { opacity: 0, y: 20 },
   visible: { opacity: 1, y: 0 },
 };
+
 const FeaturesSection = () => {
   return (
     <motion.div
@@ -35,7 +36,7 @@ const FeaturesSection = () => {
           variants={itemVariants}
           className="text-3xl font-bold text-center mb-12 w-full sm:w-2/3 mx-auto"
         >
-          Etkili arama filtrelerimizi kullanarak istediğiniz evi hızlıca bulun!
+          Quickly find your desired home using our powerful search filters!
         </motion.h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12 xl:gap-16">
           {[0, 1, 2].map((index) => (
@@ -44,19 +45,19 @@ const FeaturesSection = () => {
                 imageSrc={`/landing-search${3 - index}.png`}
                 title={
                   [
-                    "Güvenilir ve Doğrulanmış İlanlar",
-                    "Kiralık İlanlara Kolayca Göz Atın",
-                    "Gelişmiş özelliklerle arayın",
+                    "Trusted and Verified Listings",
+                    "Easily Browse Rental Listings",
+                    "Search with Advanced Features",
                   ][index]
                 }
                 description={
                   [
-                    "Kullanıcı yorumları ve puanlarıyla en iyi kiralık seçenekleri keşfedin",
-                    "Kiralık seçeneklerini daha iyi anlamak için kullanıcı yorumlarına ve puanlarına erişin",
-                    "Sorunsuz bir deneyim için güvenilir ve doğrulanmış kiralık ilanları bulun",
+                    "Discover the best rental options with user reviews and ratings.",
+                    "Access user reviews and ratings to better understand rental options.",
+                    "Find reliable and verified rental listings for a seamless experience.",
                   ][index]
                 }
-                linkText={["Keşfet", "Ara", "Keşfet"][index]}
+                linkText={["Explore", "Search", "Discover"][index]}
                 linkHref={["/explore", "/search", "/discover"][index]}
               />
             </motion.div>
@@ -101,4 +102,5 @@ const FeatureCard = ({
     </Link>
   </div>
 );
+
 export default FeaturesSection;

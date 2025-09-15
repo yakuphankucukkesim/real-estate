@@ -23,7 +23,7 @@ const Properties = () => {
     <div className="dashboard-container">
       <Header
         title="My Properties"
-        subtitle="View and manage your property listings"
+        subtitle="View and manage your listings"
       />
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {managerProperties?.map((property) => (
@@ -38,7 +38,7 @@ const Properties = () => {
         ))}
       </div>
       {(!managerProperties || managerProperties.length === 0) && (
-        <p>You don&lsquo;t manage any properties</p>
+        <p>You don&apos;t manage any listings</p>
       )}
     </div>
   );

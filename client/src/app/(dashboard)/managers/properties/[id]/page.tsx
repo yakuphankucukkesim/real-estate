@@ -54,11 +54,11 @@ const PropertyTenants = () => {
         scroll={false}
       >
         <ArrowLeft className="w-4 h-4 mr-2" />
-        <span>Back to Properties</span>
+        <span>Back to Listings</span>
       </Link>
 
       <Header
-        title={property?.name || "My Property"}
+        title={property?.name || "My Properties"}
         subtitle="Manage tenants and leases for this property"
       />
 
@@ -68,7 +68,7 @@ const PropertyTenants = () => {
             <div>
               <h2 className="text-2xl font-bold mb-1">Tenants Overview</h2>
               <p className="text-sm text-gray-500">
-                Manage and view all tenants for this property.
+                  Manage and view all tenants for this property.
               </p>
             </div>
             <div>

@@ -39,6 +39,12 @@ export const api = createApi({
         try {
           const session = await fetchAuthSession();
           const { idToken } = session.tokens ?? {};
+          
+          // If no session, return error to indicate user is not authenticated
+          if (!idToken) {
+            return { error: "No authentication token found" };
+          }
+          
           const user = await getCurrentUser();
           const userRole = idToken?.payload["custom:role"] as string;
 

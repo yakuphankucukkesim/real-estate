@@ -42,6 +42,7 @@ interface FormFieldProps {
     | "textarea"
     | "number"
     | "select"
+    | "multi-select"
     | "switch"
     | "password"
     | "file"
@@ -84,7 +85,11 @@ export const CustomFormField: React.FC<FormFieldProps> = ({
         return (
           <Textarea
             placeholder={placeholder}
-            {...field}
+            name={field.name}
+            value={field.value || ""}
+            onChange={field.onChange}
+            onBlur={field.onBlur}
+            ref={field.ref}
             rows={3}
             className={`border-gray-200 p-4 ${inputClassName}`}
           />
@@ -113,6 +118,57 @@ export const CustomFormField: React.FC<FormFieldProps> = ({
               ))}
             </SelectContent>
           </Select>
+        );
+      case "multi-select":
+        return (
+          <div className="space-y-2">
+            <div className="text-sm text-gray-600">Select multiple options:</div>
+            <div className="grid grid-cols-2 gap-2">
+              {options?.map((option) => (
+                <label
+                  key={option.value}
+                  className="flex items-center space-x-2 cursor-pointer p-2 hover:bg-gray-50 rounded border"
+                >
+                  <input
+                    type="checkbox"
+                    checked={Array.isArray(field.value) && field.value.includes(option.value)}
+                    onChange={(e) => {
+                      const currentValues = Array.isArray(field.value) ? field.value : [];
+                      if (e.target.checked) {
+                        field.onChange([...currentValues, option.value]);
+                      } else {
+                        field.onChange(currentValues.filter(v => v !== option.value));
+                      }
+                    }}
+                    className="rounded"
+                  />
+                  <span className="text-sm">{option.label}</span>
+                </label>
+              ))}
+            </div>
+            {Array.isArray(field.value) && field.value.length > 0 && (
+              <div className="flex flex-wrap gap-2 mt-2">
+                {field.value.map((value) => (
+                  <span
+                    key={value}
+                    className="bg-blue-100 text-blue-800 px-2 py-1 rounded-md text-sm flex items-center gap-1"
+                  >
+                    {options?.find((opt) => opt.value === value)?.label || value}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const currentValues = Array.isArray(field.value) ? field.value : [];
+                        field.onChange(currentValues.filter(v => v !== value));
+                      }}
+                      className="ml-1 hover:text-red-600"
+                    >
+                      <X className="w-3 h-3" />
+                    </button>
+                  </span>
+                ))}
+              </div>
+            )}
+          </div>
         );
       case "switch":
         return (
@@ -144,9 +200,21 @@ export const CustomFormField: React.FC<FormFieldProps> = ({
       case "number":
         return (
           <Input
-            type="number"
+            type="text"
+            inputMode="numeric"
+            pattern="[0-9]*"
             placeholder={placeholder}
-            {...field}
+            name={field.name}
+            value={field.value?.toString() || ""}
+            onChange={(e) => {
+              const value = e.target.value;
+              // Allow only numbers and empty string
+              if (value === "" || /^\d+$/.test(value)) {
+                field.onChange(value === "" ? undefined : Number(value));
+              }
+            }}
+            onBlur={field.onBlur}
+            ref={field.ref}
             className={`border-gray-200 p-4 ${inputClassName}`}
             disabled={disabled}
           />
@@ -165,7 +233,11 @@ export const CustomFormField: React.FC<FormFieldProps> = ({
           <Input
             type={type}
             placeholder={placeholder}
-            {...field}
+            name={field.name}
+            value={field.value || ""}
+            onChange={field.onChange}
+            onBlur={field.onBlur}
+            ref={field.ref}
             className={`border-gray-200 p-4 ${inputClassName}`}
             disabled={disabled}
           />
@@ -213,6 +285,13 @@ export const CustomFormField: React.FC<FormFieldProps> = ({
 interface MultiInputFieldProps {
   name: string;
   control: any;
+  placeholder?: string;
+  inputClassName?: string;
+}
+
+interface MultiSelectFieldProps {
+  field: ControllerRenderProps<FieldValues, string>;
+  options: { value: string; label: string }[];
   placeholder?: string;
   inputClassName?: string;
 }

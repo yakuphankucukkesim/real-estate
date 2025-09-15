@@ -3,7 +3,7 @@
 import { NAVBAR_HEIGHT } from "@/lib/constants";
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "./ui/button";
 import { useGetAuthUserQuery } from "@/state/api";
 import { usePathname, useRouter } from "next/navigation";
@@ -20,9 +20,17 @@ import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { SidebarTrigger } from "./ui/sidebar";
 
 const Navbar = () => {
-  const { data: authUser } = useGetAuthUserQuery();
+  const { data: authUser, isLoading, error } = useGetAuthUserQuery();
   const router = useRouter();
   const pathname = usePathname();
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  // Determine if user is authenticated
+  const isAuthenticated = isClient && authUser && !error;
   
   // Check if we're in a dashboard page
   const isDashboardPage = pathname.includes("/managers") || pathname.includes("/tenants");
@@ -58,14 +66,14 @@ const Navbar = () => {
                 className="w-6 h-6"
               />
               <div className="text-xl font-bold">
-                RENT
+                HAVEN
                 <span className="text-secondary-500 font-light hover:!text-primary-300">
-                  IFUL
+                  LY
                 </span>
               </div>
             </div>
           </Link>
-          {isDashboardPage && authUser && (
+          {isDashboardPage && isAuthenticated && (
             <Button
               variant="secondary"
               className="md:ml-4 bg-primary-50 text-primary-700 hover:bg-secondary-500 hover:text-primary-50"
@@ -80,13 +88,13 @@ const Navbar = () => {
               {authUser.userRole?.toLowerCase() === "manager" ? (
                 <>
                   <Plus className="h-4 w-4" />
-                  <span className="hidden md:block ml-2">Yeni Mülk Ekle</span>
+                  <span className="hidden md:block ml-2">Add New Property</span>
                 </>
               ) : (
                 <>
                   <Search className="h-4 w-4" />
                   <span className="hidden md:block ml-2">
-                    Mülk Ara
+                    Search Property
                   </span>
                 </>
               )}
@@ -95,11 +103,17 @@ const Navbar = () => {
         </div>
         {!isDashboardPage && (
           <p className="text-primary-200 hidden md:block">
-            Gelişmiş arama ile hayalinizdeki kiralık daireyi keşfedin
+           Discover your dream rental apartment with advanced search
           </p>
         )}
         <div className="flex items-center gap-5">
-          {authUser ? (
+          {!isClient || isLoading ? (
+            // Loading state - show skeleton or placeholder
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 bg-gray-300 rounded-full animate-pulse"></div>
+              <div className="w-20 h-4 bg-gray-300 rounded animate-pulse"></div>
+            </div>
+          ) : isAuthenticated ? (
             <>
               <div className="relative hidden md:block">
                 <MessageCircle className="w-6 h-6 cursor-pointer text-primary-200 hover:text-primary-400" />
@@ -134,7 +148,7 @@ const Navbar = () => {
                       )
                     }
                   >
-                    Panele Git
+                    Dashboard
                   </DropdownMenuItem>
                   <DropdownMenuSeparator className="bg-primary-200" />
                   <DropdownMenuItem
@@ -146,13 +160,13 @@ const Navbar = () => {
                       )
                     }
                   >
-                    Ayarlar
+                    Settings
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     className="cursor-pointer hover:!bg-primary-700 hover:!text-primary-100"
                     onClick={handleSignOut}
                   >
-                    Çıkış Yap
+                    Log Out
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -164,7 +178,7 @@ const Navbar = () => {
                   variant="outline"
                   className="text-white border-white bg-transparent hover:bg-white hover:text-primary-700 rounded-lg"
                 >
-                  Giriş Yap
+                  Log In
                 </Button>
               </Link>
               <Link href="/signup">
@@ -172,7 +186,7 @@ const Navbar = () => {
                   variant="secondary"
                   className="text-white bg-secondary-600 hover:bg-white hover:text-primary-700 rounded-lg"
                 >
-                  Kaydol
+                  Sign Up
                 </Button>
               </Link>
             </>

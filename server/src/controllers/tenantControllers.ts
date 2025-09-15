@@ -17,12 +17,12 @@ export const getTenant = async (req: Request, res: Response): Promise<void> => {
     if (tenant) {
       res.json(tenant);
     } else {
-      res.status(404).json({ message: "Kiracı bulunamadı" });
+      res.status(404).json({ message: "No tenant found" });
     }
   } catch (error: any) {
     res
       .status(500)
-      .json({ message: `Kiracı bilgisi alınamadı: ${error.message}` });
+      .json({ message: `Tenant information could not be retrieved: ${error.message}` });
   }
 };
 
@@ -45,7 +45,7 @@ export const createTenant = async (
   } catch (error: any) {
     res
       .status(500)
-      .json({ message: `Kiracı oluşturulurken hata oluştu: ${error.message}` });
+      .json({ message: `An error occurred while creating the tenant: ${error.message}` });
   }
 };
 
@@ -69,7 +69,7 @@ export const updateTenant = async (
     res.json(updateTenant);
   } catch (error: any) {
     res.status(500).json({
-      message: `Bilgiler güncellenirken hata oluştu: ${error.message}`,
+      message: `An error occurred while updating the information: ${error.message}`,
     });
   }
 };
@@ -80,12 +80,20 @@ export const getCurrentResidences = async (
 ): Promise<void> => {
   try {
     const { cognitoId } = req.params;
-    const properties = await prisma.property.findMany({
-      where: { tenants: { some: { cognitoId } } },
+    
+    // First get the tenant's leases
+    const leases = await prisma.lease.findMany({
+      where: { tenantCognitoId: cognitoId },
       include: {
-        location: true,
+        property: {
+          include: {
+            location: true,
+          },
+        },
       },
     });
+
+    const properties = leases.map(lease => lease.property);
 
     const residencesWithFormattedLocation = await Promise.all(
       properties.map(async (property) => {
@@ -111,9 +119,10 @@ export const getCurrentResidences = async (
 
     res.json(residencesWithFormattedLocation);
   } catch (err: any) {
+    console.error("Error in getCurrentResidences:", err);
     res
       .status(500)
-      .json({ message: `Error retrieving manager properties: ${err.message}` });
+      .json({ message: `Error retrieving current residences: ${err.message}` });
   }
 };
 

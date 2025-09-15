@@ -38,14 +38,14 @@ const AppSidebar = ({ userType }: AppSidebarProps) => {
           { icon: Settings, label: "Settings", href: "/managers/settings" },
         ]
       : [
-          { icon: Heart, label: "Favoriler", href: "/tenants/favorites" },
+          { icon: Heart, label: "Favorites", href: "/tenants/favorites" },
           {
             icon: FileText,
-            label: "Başvurular",
+            label: "Applications",
             href: "/tenants/applications",
           },
-          { icon: Home, label: "Evler", href: "/tenants/residences" },
-          { icon: Settings, label: "Ayarlar", href: "/tenants/settings" },
+          { icon: Home, label: "Properties", href: "/tenants/residences" },
+          { icon: Settings, label: "Settings", href: "/tenants/settings" },
         ];
 
   return (
@@ -62,7 +62,7 @@ const AppSidebar = ({ userType }: AppSidebarProps) => {
           <SidebarMenuItem>
             <div className="flex min-h-[56px] w-full items-center justify-between px-6 pt-3 mb-3">
               <h1 className="text-xl font-bold text-gray-800">
-                {userType === "manager" ? "Yönetici Paneli" : "Kiracı Paneli"}
+                {userType === "manager" ? "Manager Dashboard" : "Tenant Dashboard"}
               </h1>
               <button
                 className="hover:bg-gray-100 p-2 rounded-md"

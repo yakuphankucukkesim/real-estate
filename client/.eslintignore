@@ -1,0 +1,8 @@
+.next/
+node_modules/
+dist/
+build/
+*.js
+*.d.ts
+.next/types/
+.next/static/

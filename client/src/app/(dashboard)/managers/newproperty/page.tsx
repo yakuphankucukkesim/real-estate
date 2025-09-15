@@ -12,7 +12,7 @@ import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 
 const NewProperty = () => {
-  const [createProperty] = useCreatePropertyMutation();
+  const [createProperty, { isLoading: isCreating }] = useCreatePropertyMutation();
   const { data: authUser } = useGetAuthUserQuery();
 
   const form = useForm<PropertyFormData>({
@@ -20,17 +20,17 @@ const NewProperty = () => {
     defaultValues: {
       name: "",
       description: "",
-      pricePerMonth: 1000,
-      securityDeposit: 500,
-      applicationFee: 100,
+      pricePerMonth: undefined,
+      securityDeposit: undefined,
+      applicationFee: undefined,
       isPetsAllowed: true,
       isParkingIncluded: true,
       photoUrls: [],
-      amenities: "",
-      highlights: "",
-      beds: 1,
-      baths: 1,
-      squareFeet: 1000,
+      amenities: [],
+      highlights: [],
+      beds: undefined,
+      baths: undefined,
+      squareFeet: undefined,
       propertyType: PropertyTypeEnum.Apartment,
       address: "",
       city: "",
@@ -41,34 +41,58 @@ const NewProperty = () => {
   });
 
   const onSubmit = async (data: PropertyFormData) => {
-    if (!authUser?.cognitoInfo?.userId) {
-      throw new Error("No manager ID found");
-    }
-
-    const formData = new FormData();
-    Object.entries(data).forEach(([key, value]) => {
-      if (key === "photoUrls") {
-        const files = value as File[];
-        files.forEach((file: File) => {
-          formData.append("photos", file);
-        });
-      } else if (Array.isArray(value)) {
-        formData.append(key, JSON.stringify(value));
-      } else {
-        formData.append(key, String(value));
+    try {
+      if (!authUser?.cognitoInfo?.userId) {
+        throw new Error("No manager ID found. Please sign in again.");
       }
-    });
 
-    formData.append("managerCognitoId", authUser.cognitoInfo.userId);
+      console.log("Form data:", data);
 
-    await createProperty(formData);
+      const formData = new FormData();
+      Object.entries(data).forEach(([key, value]) => {
+        if (key === "photoUrls") {
+          const files = value as File[];
+          files.forEach((file: File) => {
+            formData.append("photos", file);
+          });
+        } else if (Array.isArray(value)) {
+          // Handle arrays (amenities, highlights)
+          if (value.length > 0) {
+            formData.append(key, JSON.stringify(value));
+          }
+        } else if (typeof value === "number") {
+          // Ensure numbers are sent as numbers, not strings
+          formData.append(key, value.toString());
+        } else if (value !== undefined && value !== null) {
+          formData.append(key, String(value));
+        }
+      });
+
+      formData.append("managerCognitoId", authUser.cognitoInfo.userId);
+
+      // Debug: Log form data
+      console.log("FormData contents:");
+      for (let [key, value] of formData.entries()) {
+        console.log(key, value);
+      }
+
+      await createProperty(formData);
+    } catch (error: any) {
+      console.error("Error creating property:", error);
+      
+      // Show user-friendly error message
+      const errorMessage = error?.message || "Failed to create property. Please try again.";
+      console.error("User-friendly error:", errorMessage);
+      
+      // The error will also be handled by RTK Query's onQueryStarted
+    }
   };
 
   return (
     <div className="dashboard-container">
       <Header
         title="Add New Property"
-        subtitle="Create a new property listing with detailed information"
+        subtitle="Create a new listing with detailed information"
       />
       <div className="bg-white rounded-xl p-6">
         <Form {...form}>
@@ -80,7 +104,7 @@ const NewProperty = () => {
             <div>
               <h2 className="text-lg font-semibold mb-4">Basic Information</h2>
               <div className="space-y-4">
-                <CustomFormField name="name" label="Property Name" />
+                <CustomFormField name="name" label="Listing Title" />
                 <CustomFormField
                   name="description"
                   label="Description"
@@ -96,19 +120,22 @@ const NewProperty = () => {
               <h2 className="text-lg font-semibold mb-4">Fees</h2>
               <CustomFormField
                 name="pricePerMonth"
-                label="Price per Month"
+                label="Monthly Fee"
                 type="number"
+                placeholder="Enter monthly rent amount"
               />
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <CustomFormField
                   name="securityDeposit"
                   label="Security Deposit"
                   type="number"
+                  placeholder="Enter security deposit amount"
                 />
                 <CustomFormField
                   name="applicationFee"
                   label="Application Fee"
                   type="number"
+                  placeholder="Enter application fee amount"
                 />
               </div>
             </div>
@@ -117,33 +144,36 @@ const NewProperty = () => {
 
             {/* Property Details */}
             <div className="space-y-6">
-              <h2 className="text-lg font-semibold mb-4">Property Details</h2>
+              <h2 className="text-lg font-semibold mb-4">Listing Details</h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <CustomFormField
                   name="beds"
                   label="Number of Beds"
                   type="number"
+                  placeholder="Enter number of bedrooms"
                 />
                 <CustomFormField
                   name="baths"
                   label="Number of Baths"
                   type="number"
+                  placeholder="Enter number of bathrooms"
                 />
                 <CustomFormField
                   name="squareFeet"
-                  label="Square Feet"
+                  label="Square Meters (m²)"
                   type="number"
+                  placeholder="Enter square meters"
                 />
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                 <CustomFormField
                   name="isPetsAllowed"
-                  label="Pets Allowed"
+                  label="Pets Allowed 🐾"
                   type="switch"
                 />
                 <CustomFormField
                   name="isParkingIncluded"
-                  label="Parking Included"
+                  label="Parking Included 🚗"
                   type="switch"
                 />
               </div>
@@ -171,19 +201,21 @@ const NewProperty = () => {
                 <CustomFormField
                   name="amenities"
                   label="Amenities"
-                  type="select"
+                  type="multi-select"
+                  placeholder="Select amenities"
                   options={Object.keys(AmenityEnum).map((amenity) => ({
                     value: amenity,
-                    label: amenity,
+                    label: amenity.replace(/([A-Z])/g, ' $1').trim(),
                   }))}
                 />
                 <CustomFormField
                   name="highlights"
                   label="Highlights"
-                  type="select"
+                  type="multi-select"
+                  placeholder="Select highlights"
                   options={Object.keys(HighlightEnum).map((highlight) => ({
                     value: highlight,
-                    label: highlight,
+                    label: highlight.replace(/([A-Z])/g, ' $1').trim(),
                   }))}
                 />
               </div>
@@ -229,8 +261,9 @@ const NewProperty = () => {
             <Button
               type="submit"
               className="bg-primary-700 text-white w-full mt-8"
+              disabled={isCreating}
             >
-              Create Property
+              {isCreating ? "Creating Property..." : "Create Property"}
             </Button>
           </form>
         </Form>

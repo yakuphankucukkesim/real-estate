@@ -47,9 +47,22 @@ export const withToast = async <T>(
     const result = await mutationFn;
     if (success) toast.success(success);
     return result;
-  } catch (err) {
-    if (error) toast.error(error);
-    throw err;
+  } catch (err: any) {
+    console.error("withToast error:", err);
+    
+    // Extract meaningful error message
+    let errorMessage = error || "An unexpected error occurred";
+    
+    if (err?.data?.message) {
+      errorMessage = err.data.message;
+    } else if (err?.message) {
+      errorMessage = err.message;
+    } else if (typeof err === 'string') {
+      errorMessage = err;
+    }
+    
+    toast.error(errorMessage);
+    throw new Error(errorMessage);
   }
 };
 

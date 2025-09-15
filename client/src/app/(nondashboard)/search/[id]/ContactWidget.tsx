@@ -24,9 +24,9 @@ const ContactWidget = ({ onOpenModal }: ContactWidgetProps) => {
           <Phone className="text-primary-50" size={15} />
         </div>
         <div>
-          <p>Contact This Property</p>
+          <p>Contact this property</p>
           <div className="text-lg font-bold text-primary-800">
-            (424) 340-5574
+            + 90 (530) 999 9999
           </div>
         </div>
       </div>

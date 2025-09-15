@@ -17,12 +17,12 @@ export const getManager = async (
     if (manager) {
       res.json(manager);
     } else {
-      res.status(404).json({ message: "Yönetici bulunamadı" });
+      res.status(404).json({ message: "No manager found" });
     }
   } catch (error: any) {
     res
       .status(500)
-      .json({ message: `Yönetici bilgisi alınamadı: ${error.message}` });
+      .json({ message: `Manager information could not be retrieved: ${error.message}` });
   }
 };
 
@@ -44,7 +44,7 @@ export const createManager = async (
     res.status(201).json(manager);
   } catch (error: any) {
     res.status(500).json({
-      message: `Yönetici oluşturulurken hata oluştu: ${error.message}`,
+      message: `An error occurred while creating the tenant: ${error.message}`,
     });
   }
 };
@@ -71,7 +71,7 @@ export const updateManager = async (
     res
       .status(500)
       .json({
-        message: `Bilgiler güncellenirken hata oluştu: ${error.message}`,
+        message: `An error occurred while updating the information: ${error.message}`,
       });
   }
 };

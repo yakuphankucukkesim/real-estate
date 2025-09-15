@@ -31,37 +31,37 @@ const DiscoverSection = () => {
       <div className="max-w-6xl xl:max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 xl:px-16">
         <motion.div variants={itemVariants} className="my-12 text-center">
           <h2 className="text-3xl font-semibold leading-tight text-gray-800">
-            Keşfet
+            Discover
           </h2>
           <p className="mt-4 text-lg text-gray-600">
-            Hayalinizdeki Kiralık Evi Bugün Bulun!
+            Find Your Dream Rental Home Today!
           </p>
           <p className="mt-2 text-gray-500 max-w-3xl mx-auto">
-            Hayalinizdeki kiralık evi aramak hiç bu kadar kolay olmamıştı.
-            Kullanıcı dostu arama özelliğimiz sayesinde ihtiyaçlarınıza uygun
-            mükemmel evi hızlıca bulabilirsiniz. Aramaya bugün başlayın ve
-            hayalinizdeki kiralık evi keşfedin!
+            Searching for your dream rental home has never been easier.
+            With our user-friendly search feature, you can quickly find the
+            perfect home that suits your needs. Start your search today and
+            discover your dream rental!
           </p>
         </motion.div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12 xl:gap-16 text-center">
           {[
             {
               imageSrc: "/landing-icon-wand.png",
-              title: "Emlak Ara",
+              title: "Search Properties",
               description:
-                "İstediğiniz konumdaki geniş kiralık emlak koleksiyonumuzu inceleyin.",
+                "Browse our wide collection of rental properties in your desired location.",
             },
             {
               imageSrc: "/landing-icon-calendar.png",
-              title: "Rezervasyon Yap",
+              title: "Make a Reservation",
               description:
-                "Mükemmel kiralık evi bulduğunuzda, sadece birkaç tıkla kolayca online olarak rezerve edin.",
+                "Once you find the perfect rental, easily reserve it online with just a few clicks.",
             },
             {
               imageSrc: "/landing-icon-heart.png",
-              title: "Yeni Evinizin Keyfini Çıkarın",
+              title: "Enjoy Your New Home",
               description:
-                "Yeni kiralık evinize taşının ve hayalinizdeki evin keyfini çıkarmaya başlayın.",
+                "Move into your new rental home and start enjoying the comfort of your dream place.",
             },
           ].map((card, index) => (
             <motion.div key={index} variants={itemVariants}>

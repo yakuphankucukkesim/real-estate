@@ -28,7 +28,10 @@ const Residences = () => {
   });
 
   if (isLoading) return <Loading />;
-  if (error) return <div>Error loading current residences</div>;
+  if (error) {
+    console.error("Error loading current residences:", error);
+    return <div>Error loading current residences: {JSON.stringify(error)}</div>;
+  }
 
   return (
     <div className="dashboard-container">
@@ -49,7 +52,7 @@ const Residences = () => {
         ))}
       </div>
       {(!currentResidences || currentResidences.length === 0) && (
-        <p>You don&lsquo;t have any current residences</p>
+        <p>You don't have any current residences</p>
       )}
     </div>
   );
