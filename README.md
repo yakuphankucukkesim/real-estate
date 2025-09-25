@@ -3,7 +3,7 @@
 This repository is the starting point of a **real estate platform**.  
 At the moment, it only contains a single text file, but it will evolve into a full application.
 
-![Proje Ekran Görüntüsü](./client/github/1.png)
+![Proje Ekran Görüntüsü](./client/src/github/1.png)
 
 ---
 
