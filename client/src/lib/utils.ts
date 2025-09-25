@@ -59,6 +59,12 @@ export const withToast = async <T>(
       errorMessage = err.message;
     } else if (typeof err === 'string') {
       errorMessage = err;
+    } else if (err && typeof err === 'object' && Object.keys(err).length === 0) {
+      // Handle empty error objects
+      errorMessage = "An unexpected error occurred. Please try again.";
+    } else if (err?.status) {
+      // Handle HTTP status errors
+      errorMessage = `Request failed with status ${err.status}`;
     }
     
     toast.error(errorMessage);

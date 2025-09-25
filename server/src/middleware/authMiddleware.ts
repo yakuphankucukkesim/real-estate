@@ -28,9 +28,15 @@ export const authMiddleware = (allowedRoles: string[]) => {
 
     try {
       const decoded = jwt.decode(token) as DecodedToken;
+      
+      if (!decoded) {
+        res.status(400).json({ message: "Invalid token format" });
+        return;
+      }
+      
       const userRole = decoded["custom:role"] || "";
       req.user = {
-        id: decoded.sub,
+        id: decoded.sub || "",
         role: userRole,
       };
 
